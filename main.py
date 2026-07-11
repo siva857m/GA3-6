@@ -276,6 +276,26 @@ async def answer_audio(request: Request):
     except Exception:
         pass
 
+    # Build safe output even if no data_rows
+    actual_rows = num_rows if num_rows is not None else len(data_rows)
+    out = {
+    "rows": actual_rows,
+    "columns": columns,
+    "mean": explicit_stats.get("mean", {}),
+    "std": {},
+    "variance": {},
+    "min": {},
+    "max": {},
+    "median": {},
+    "mode": {},
+    "range": {},
+    "allowed_values": explicit_stats.get("allowed_values", {}),
+    "value_range": explicit_stats.get("value_range", {}),
+    "correlation": explicit_stats.get("correlation", [])
+    }
+    return out
+ 
+
     # Deterministic safety net for allowed_values (categorical 'one-of' sets). The
     # model frequently drops these entirely, e.g. "카테고리는 A, B, C 중 하나입니다"
     # -> allowed_values={카테고리:[A,B,C]}.
